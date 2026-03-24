@@ -1,7 +1,9 @@
 import { useRef, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+// import "components/Button.jsx"
+import {Checkbox} from "./components/Checkbox.jsx"
+import {Text} from "./components/Text.jsx"
+import {Button} from "./components/Button.jsx"
+import {Input} from "./components/Input.jsx"
 import './App.css'
 
 function App() {
@@ -42,6 +44,7 @@ function App() {
   }
 
   const editTask = (id) => {
+    console.log(tasks)
     if (id === editingId) { // 
       const copiedTasks = tasks.map(task => (task.id === id) ? {...task, taskName: editText.current.value} : task)
       setTasks(copiedTasks)
@@ -79,24 +82,27 @@ function App() {
       <h1> TodoMatic </h1>
       <h2> What needs to be done? </h2>
       <div>
-        <input ref={nameText}/>
-        <button onClick={addTask}> Add </button>
+        <Input defaultValue={""} ref={nameText}/>
+        <Button onClick={addTask}> Add </Button>
       </div>
-      <button onClick={()=>setFilter(Filters.All)}> Show all tasks </button>
-      <button onClick={()=>setFilter(Filters.Active)}> Show active tasks </button>
-      <button onClick={()=>setFilter(Filters.Completed)}> Show completed tasks </button>
+      <Button onClick={()=>setFilter(Filters.All)}> Show all tasks </Button>
+      <Button onClick={()=>setFilter(Filters.Active)}> Show active tasks </Button>
+      <Button onClick={()=>setFilter(Filters.Completed)}> Show completed tasks </Button>
       <h2>{tasks.length - completedCount.current} Task remaining </h2>
       <ul>
         {tasks.map((task) => (filterTask(task) === true) &&
           <li key={task.id}>
             {editingId === task.id ? 
-              <div><input defaultValue={""} ref={editText}/></div>
+              <div><Input defaultValue={""} ref={editText}/></div>
               :
-              <div><input defaultChecked={task.isCompleted} type="checkbox" onChange={e=>checkHandler(task.id, e.target.checked)}/> {task.taskName} </div>
+              <div>
+                <Checkbox defaultChecked={task.isCompleted} onChange={e=>checkHandler(task.id, e.target.checked)} /> 
+                <Text>{task.taskName}</Text>
+              </div>
             }
-            <button onClick={()=>editTask(task.id)}> {editingId === task.id ? "Save" : `Edit ${task.taskName}`} </button>
+            <Button onClick={()=>editTask(task.id)}> {editingId === task.id ? "Save" : `Edit ${task.taskName}`} </Button>
 
-            <button onClick={()=>deleteTask(task.id)}> Delete {task.taskName} </button>
+            <Button onClick={()=>deleteTask(task.id)}> Delete {task.taskName} </Button>
           </li>
         )}
       </ul>
