@@ -1,12 +1,12 @@
-import React from 'react';
-
-export const Checkbox = ({ checked, onChange, id }) => {
+function Checkbox({ checked, onChange }) {
   return (
-    <input 
-      type="checkbox" 
-      id={id} 
-      checked={checked} 
-      onChange={(e) => onChange(e.target.checked)} 
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+      className="checkbox"
     />
   );
-};
+}
+
+export default Checkbox;

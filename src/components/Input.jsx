@@ -1,9 +1,12 @@
-import React from 'react';
-export function Input({ value, onChange }) {
+function Input({ value, onChange, placeholder }) {
   return (
     <input
+      className="input"
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={onChange}
+      placeholder={placeholder}
     />
   );
 }
+
+export default Input;
