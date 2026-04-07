@@ -36,8 +36,8 @@ function App() {
 
   const currentPath = location.pathname;
   const filteredTodos = todos.filter((todo) => {
+    if (currentPath === '/active') return !todo.completed;
     if (currentPath === '/completed') return todo.completed;
-    if (currentPath === '/') return !todo.completed;
     return true;
   });
 
@@ -75,6 +75,7 @@ function App() {
         <Routes>
           <Route path="/" element={todoListUI} />
           <Route path="/all" element={todoListUI} />
+          <Route path="/active" element={todoListUI} />
           <Route path="/completed" element={todoListUI} />
         </Routes>
 
