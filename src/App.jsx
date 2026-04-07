@@ -1,8 +1,9 @@
 import { useState, useRef } from "react";
-import Text from "./Components/Text";
-import Button from "./Components/Button";
-import Checkbox from "./Components/Checkbox";
-import Input from "./Components/Input";
+import { Routes, Route, Link } from "react-router";
+import Text from "./Components/Text.jsx";
+import Button from "./Components/Button.jsx";
+import TodoList from "./Features/TodoList.jsx";
+import TodoAdd from "./Features/TodoAdd.jsx";
 
 function App() {
   const [tasks, setTasks] = useState ([
@@ -11,26 +12,11 @@ function App() {
     { id: 2, title: "Repeat", done: false}
   ]);
   
-  const [input, setInput] = useState ("");
   const nextId = useRef(3);
-
-  const [filtering, setFiltering] = useState("allTasks");
-  
-  const [editId, setEditId] = useState(null);
-  const [editTitle, setEditTitle] = useState("");
-
-  const FILTER = {
-    allTasks: () => true,
-    activeTasks: (task) => !task.done,
-    completedTasks: (task) => task.done
-  };
-
-  const addTask = (e) => {
-    e.preventDefault();
-    if (!input) return;
+ 
+  const addTask = (input) => {
     const newTask = { id: nextId.current, title: input, done: false};
     setTasks([...tasks, newTask]);
-    setInput("");
     nextId.current += 1;
   };
 
@@ -38,10 +24,8 @@ function App() {
     setTasks(tasks.map(task => (task.id === id) ? { ...task, done: !task.done } : task));
   };
 
-  const saveEditedTask = (id) => {
-    if (!editTitle) return;
-    setTasks(tasks.map(task => task.id === id ? { ...task, title: editTitle} : task));
-    setEditId(null);
+  const editTask = (id, newTitle) => {
+    setTasks(tasks.map(task => task.id === id ? { ...task, title: newTitle} : task));
   }
 
   const deleteTask = (id) => {
@@ -50,56 +34,65 @@ function App() {
 
   const remainingTasks = tasks.filter(task => !task.done).length;
 
-  const filteredTasks = tasks.filter(FILTER[filtering]);
+  const allTasks = tasks;
+  const activeTasks = tasks.filter(task => !task.done);
+  const completedTasks = tasks.filter(task => task.done);
+
   return(
-    <div>
-      <Text tagName="h1">TodoMatic</Text>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-lg rounded-xl p-6">
+        <Text tagName="h1" className="text-3xl font-bold text-center mb-2">TodoMatic</Text>
+        
+        <TodoAdd onAddTask={addTask}></TodoAdd>
+
+        <div className="flex gap-2 mb-6">
+          <Link to="/all" className="flex-1 bg-gray-500 text-white text-center py-3 rounded-md">
+            <Button>All</Button>
+          </Link>
+          <Link to="/" className="flex-1 bg-gray-500 text-white text-center py-3 rounded-md">
+            <Button>Active</Button>
+          </Link>
+          <Link to="/completed" className="flex-1 bg-gray-500 text-white text-center py-3 rounded-md">
+            <Button>Completed</Button>
+          </Link>
+        </div>
+
+        <Text tagName="h3" className="text-lg font-bold text-gray-800 mb-4">
+          {remainingTasks} tasks remaining
+        </Text>
       
-      <div>
-        <Text tagName="h2">What needs to be done?</Text>
-        <Input value={input} onChange={setInput}/>
-        <Button onClick={addTask}>Add</Button>
-      </div>
-
-      <div>
-        <Button onClick={() => setFiltering("allTasks")}>Show all tasks</Button>
-        <Button onClick={() => setFiltering("activeTasks")}>Show active tasks</Button>
-        <Button onClick={() => setFiltering("completedTasks")}>Show completed tasks</Button>
-      </div>
-
-      <Text tagName="h3">{remainingTasks} tasks remaining</Text>
-    
-      <ul>
-        {filteredTasks.map((task) => {
-          if (editId === task.id){
-            return (
-              <li key={task.id}>
-                <Input value={editTitle} onChagne={setEditTitle}/>
-                <Button onClick={() => saveEditedTask(task.id)}>Save Edit</Button>
-              </li>
-            )
-          }
-          return(
-            <li key={task.id}>
-              <Checkbox
-                id={task.id}
-                checked={task.done}
-                onChange={() => toggleTask(task.id)}
+        <Routes>
+          <Route path="/all" element={
+              <TodoList 
+                tasks={allTasks} 
+                onToggle={toggleTask}
+                onDelete={deleteTask}
+                onEdit={editTask}
               />
-              <Text tagName="span">{task.title}</Text>
-              <div>
-                <Button onClick = {() => {
-                  setEditId(task.id);
-                  setEditTitle(task.title);
-                }}>
-                  Edit {task.title}
-                </Button>
-                <Button onClick={() => deleteTask(task.id)}>Delete {task.title}</Button>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+            } 
+          />
+
+          <Route path="/" element={
+              <TodoList 
+                tasks={activeTasks} 
+                onToggle={toggleTask}
+                onDelete={deleteTask}
+                onEdit={editTask}
+              />
+            } 
+          />
+          
+          <Route path="/completed" element={
+              <TodoList 
+                tasks={completedTasks} 
+                onToggle={toggleTask}
+                onDelete={deleteTask}
+                onEdit={editTask}
+              />
+            } 
+          />
+        </Routes>
+      </div>
     </div>
   )
 }
