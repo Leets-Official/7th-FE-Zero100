@@ -1,7 +1,6 @@
-
 import clsx from "clsx"
 import { NavLink } from 'react-router'
-export const FliterButtons = ({onClick, children, className}) => {
+export const FliterButtons = () => {
     return <div>
         <NavLink to="/all" className={({ isActive }) => clsx(
           'w-30 inline-block h-8 text-center leading-8 rounded', isActive ? 'bg-black text-white' : 'outline outline-gray-300',

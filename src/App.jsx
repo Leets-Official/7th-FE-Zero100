@@ -14,9 +14,7 @@ function App() {
     Completed: "completed"
   }
 
-  
   const keyCount = useRef(3)
-  const [completedCount, setCompletedCount] = useState(0)
   const nameText = useRef()
   const [editingId, setEditingId] = useState(0)
   const [tasks, setTasks] = useState([
@@ -24,21 +22,20 @@ function App() {
     {id:2, isCompleted: false, taskName: "Sleep"},
     {id:3, isCompleted: false, taskName: "Repeat"}
   ])
+  const activeCount = tasks.filter(task => !task.isCompleted).length;
 
 /*------------------------------------------------------------------------------------------*/
 
   const addTask = ()=> {
-    keyCount.current++
-    nameText.current.value.trim() && setTasks(prev => [...prev, {id: keyCount.current, isCompleted: false, taskName: nameText.current.value}])
+    const newNameText = nameText.current.value
+    if (newNameText.trim()) {
+      nameText.current.value = ""
+      keyCount.current++
+      setTasks(prev => [...prev, {id: keyCount.current, isCompleted: false, taskName: newNameText}])
+    }
   }
 
   const deleteTask = (id) => {
-    tasks.map(task => {
-      if (task.id === id) { 
-        task.isCompleted && setCompletedCount(prev => --prev)
-      } 
-    })
-    
     setTasks(prev => prev.filter(task => task.id !== id))
   }
 
@@ -61,14 +58,10 @@ function App() {
     }
   }
 
-  const checkHandler = (id, isChecked) => {
-    const copiedTasks = tasks.map(task => {
-      if (task.id === id) { 
-        isChecked ? setCompletedCount(prev => ++prev) : setCompletedCount(prev => --prev)
-        return {...task, isCompleted: isChecked} 
-      } else {return task}
-    })
-
+  const countCompleted = (id, isChecked) => {
+    const copiedTasks = tasks.map(task => 
+      task.id === id ? { ...task, isCompleted: isChecked } : task
+    )
     setTasks(copiedTasks)
   } 
 
@@ -89,7 +82,7 @@ function App() {
         <FliterButtons/>
     
         {/* 남은 Task 수 표시 */}
-        <h2 className='w-94 mt-3.5 mb-2.5 font-bold'>{tasks.length - completedCount} tasks remaining </h2>
+        <h2 className='w-94 mt-3.5 mb-2.5 font-bold'>{activeCount} tasks remaining </h2>
     
         {/* 필터별 리스트 */}
         <Routes>
@@ -97,7 +90,7 @@ function App() {
           <Route path="/all" element={
             <List 
               tasks={filterTasks(Filters.All)}
-              checkHandler={checkHandler}
+              checkHandler={countCompleted}
               editTask={editTask}
               deleteTask={deleteTask}
               editingId={editingId}
@@ -107,7 +100,7 @@ function App() {
           <Route path="/active" element={
             <List 
               tasks={filterTasks(Filters.Active)}
-              checkHandler={checkHandler}
+              checkHandler={countCompleted}
               editTask={editTask}
               deleteTask={deleteTask}
               editingId={editingId}
@@ -117,7 +110,7 @@ function App() {
           <Route path="/completed" element={
             <List 
               tasks={filterTasks(Filters.Completed)}
-              checkHandler={checkHandler}
+              checkHandler={countCompleted}
               editTask={editTask}
               deleteTask={deleteTask}
               editingId={editingId}
