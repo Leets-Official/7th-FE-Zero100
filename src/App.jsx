@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import {Button} from "./components/ui/Button.jsx"
 import {Input} from "./components/ui/Input.jsx"
 import {List} from "./components/List.jsx"
@@ -13,25 +13,24 @@ function App() {
     Active: "active",
     Completed: "completed"
   }
-
-  const keyCount = useRef(3)
+  
   const nameText = useRef()
-  const [editingId, setEditingId] = useState(0)
-  const [tasks, setTasks] = useState([
-    {id:1, isCompleted: false, taskName: "Eat"},
-    {id:2, isCompleted: false, taskName: "Sleep"},
-    {id:3, isCompleted: false, taskName: "Repeat"}
-  ])
-  const activeCount = tasks.filter(task => !task.isCompleted).length;
+  const [editingId, setEditingId] = useState(null)
+  const [tasks, setTasks] = useState(
+    JSON.parse(localStorage.getItem("tasks")) ?? []
+  )
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks))
+  }, [tasks]);
 
 /*------------------------------------------------------------------------------------------*/
 
-  const addTask = ()=> {
+  const addTask = () => {
     const newNameText = nameText.current.value
     if (newNameText.trim()) {
       nameText.current.value = ""
-      keyCount.current++
-      setTasks(prev => [...prev, {id: keyCount.current, isCompleted: false, taskName: newNameText}])
+      setTasks(prev => [...prev, {id: crypto.randomUUID(), isCompleted: false, taskName: newNameText}])
     }
   }
 
@@ -47,6 +46,10 @@ function App() {
       setEditingId(id)
     }
   }
+
+  const cancelEditTask = () => {
+    setEditingId(null)
+  }
   
   const filterTasks = (filter) => {
     if (filter === Filters.All) {
@@ -59,10 +62,9 @@ function App() {
   }
 
   const countCompleted = (id, isChecked) => {
-    const copiedTasks = tasks.map(task => 
+    setTasks(prev => prev.map(task => 
       task.id === id ? { ...task, isCompleted: isChecked } : task
-    )
-    setTasks(copiedTasks)
+    ))
   } 
 
 // /*--------------------------------------------------------------------------------------------------*/
@@ -82,7 +84,7 @@ function App() {
         <FliterButtons/>
     
         {/* 남은 Task 수 표시 */}
-        <h2 className='w-94 mt-3.5 mb-2.5 font-bold'>{activeCount} tasks remaining </h2>
+        <h2 className='w-94 mt-3.5 mb-2.5 font-bold'>{tasks.filter(task => !task.isCompleted).length} tasks remaining </h2>
     
         {/* 필터별 리스트 */}
         <Routes>
@@ -94,6 +96,7 @@ function App() {
               editTask={editTask}
               deleteTask={deleteTask}
               editingId={editingId}
+              cancelEditTask={cancelEditTask}
             />
           }/>
   
@@ -104,6 +107,7 @@ function App() {
               editTask={editTask}
               deleteTask={deleteTask}
               editingId={editingId}
+              cancelEditTask={cancelEditTask}
             />
           }/>
   
@@ -114,6 +118,7 @@ function App() {
               editTask={editTask}
               deleteTask={deleteTask}
               editingId={editingId}
+              cancelEditTask={cancelEditTask}
             />
           }/>
         </Routes>
