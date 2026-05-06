@@ -1,18 +1,21 @@
+import { useState } from 'react'
 import { Button } from '../components/Button'
+import { Modal } from '../components/Modal'
+import { Link } from 'react-router'
 
 export const InquiryDetail = () => {
+
+  const [isMoalOpen, setIsMoalOpen] = useState(false)
+
   return (
     <div>
+      {isMoalOpen && <Modal closeModal={() => setIsMoalOpen(false)}>문의를 삭제하시겠습니까?</Modal>}
       <div className="flex justify-between">
         <h1 className="mb-7 text-2xl font-bold">문의 상세</h1>
         <div className='flex'>
-          <Button isFill={false} width={'w-28'}>
-            목록으로
-          </Button>
+          <Button isFill={false} width={'w-28'} to={'/inquiryList'}> 목록으로 </Button>
           <div className='w-5'></div>
-          <Button isFill={false} width={'w-22'}>
-            삭제
-          </Button>
+          <Button isFill={false} width={'w-22'} onClick={() => setIsMoalOpen(true)}> 삭제 </Button>
         </div>
       </div>
 
@@ -22,14 +25,14 @@ export const InquiryDetail = () => {
           <h1 className="mt-2 text-2xl font-bold">서비스 이용 관련 문의 드립니다</h1>
         </div>
 
-        <div className="flex justify-between bg-[#f8fafb] p-5">
+        <div className="flex justify-between bg-[#f8fafb] p-5 border-y border-gray-200">
           <div>
-            <h3>작성자</h3>
-            <p className="font-bold">홍길동</p>
+            <h3 className='text-sm mb-1 text-gray-600'>작성자</h3>
+            <p className="font-medium">홍길동</p>
           </div>
           <div>
-            <h3>이메일</h3>
-            <p className="font-bold">hong@ex.com</p>
+            <h3 className='text-sm mb-1 text-gray-600'>이메일</h3>
+            <p className="font-medium">hong@ex.com</p>
           </div>
           <div></div>
         </div>

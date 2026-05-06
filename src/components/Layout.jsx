@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
+import { ToastProvider } from './Toast'
 
 export const Layout = () => {
   return (
@@ -9,9 +10,12 @@ export const Layout = () => {
       <div className="flex flex-1 bg-[#f8fafb]">
         <Sidebar />
         <div className="flex-1 p-8">
-          <Outlet />
+          <ToastProvider>
+            <Outlet />
+          </ToastProvider>
         </div>
       </div>
+      
     </div>
   )
 }

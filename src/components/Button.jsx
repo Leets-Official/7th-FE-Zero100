@@ -1,14 +1,16 @@
 import clsx from 'clsx'
+import { useNavigate } from 'react-router';
 
-export const Button = ({ children, isFill, width }) => {
+export const Button = ({ children, isFill, width, onClick, to}) => {
+  const navigate = useNavigate();
+
   return (
-    <button
-      className={clsx(
-        'h-9 rounded-lg text-center',
-        width,
-        isFill ? 'bg-black text-white' : 'outline outline-gray-200',
-      )}
-    >
+    <button onClick={ () => {
+      onClick && onClick()
+      to && navigate(to)
+    }} className={clsx('h-10.5 rounded-lg text-center font-medium cursor-pointer', width, 
+      isFill ? 'bg-black text-white' : 'border border-gray-200'
+    )}>
       {children}
     </button>
   )

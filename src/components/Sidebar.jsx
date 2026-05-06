@@ -16,7 +16,7 @@ export const Sidebar = () => {
           )}> 문의 </NavLink>
         </li>
         <li>
-          <NavLink to="" className={({ isActive }) => clsx(
+          <NavLink to="/myPage" className={({ isActive }) => clsx(
             'flex h-11 items-center pl-5', isActive ? 'bg-gray-100 font-semibold' : 'font-medium'
           )}> 마이페이지 </NavLink>
         </li>
