@@ -23,6 +23,7 @@ const Button = ({
   return (
     <button
       className={`${variantStyles[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
+      type="button"
       {...props}
     >
       {children}
